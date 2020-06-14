@@ -8,12 +8,10 @@ exports.VoteCandidates = (req, res) => {
     }).then(() => res.json({
         status: 200,
         message: "投票成功"
-    })).catch(err => {
-        res.json({
-            status: err.status || 520,
-            message: err.message || "信息储存失败"
-        })
-    })
+    })).catch(err => res.json({
+        status: err.status || 520,
+        message: err.message || "信息储存失败"
+    }))
 }
 
 exports.VoteResult = (req, res) => {
@@ -39,10 +37,37 @@ exports.VoteResult = (req, res) => {
         status: 200,
         message: '查询成功',
         result
-    })).catch(err => {
-        res.json({
-            status: err.status || 530,
-            message: err.status || "查询失败",
-        })
-    })
+    })).catch(err => res.json({
+        status: err.status || 530,
+        message: err.status || "查询失败",
+    }))
+}
+
+exports.GetVoters = (req, res) => {
+    Voter.find({}, "voter").then(voters => res.json({
+        status: 200,
+        message: '查询成功',
+        voters
+    })).catch(err => res.json({
+        status: err.status || 540,
+        message: err.status || "获取失败",
+    }))
+}
+
+exports.RemoveCell = (req, res) => {
+    const { _id, key } = req.query;
+    let find;
+    if (key === 'candidates') {
+        find = Candidate.deleteOne({ _id });
+    } else if (key === 'voters') {
+        find = Voter.deleteOne({ _id });
+    }
+    find.then(() => res.json({
+        status: 200,
+        message: "删除成功"
+    })).catch(err => res.json({
+        status: err.status || 540,
+        message: err.status || "删除失败",
+    }))
+    console.log(_id)
 }

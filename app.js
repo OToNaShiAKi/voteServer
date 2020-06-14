@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 
 const indexRouter = require('./routes/index');
+const checkRouter = require('./routes/check');
 
 const cors = require('./middlewares/cors')
 require('./middlewares/mongo')
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
 app.use('/', indexRouter);
+app.use('/check', checkRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

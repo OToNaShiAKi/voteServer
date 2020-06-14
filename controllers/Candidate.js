@@ -3,9 +3,11 @@ const fs = require("fs")
 const { basename, resolve } = require('path')
 const { IncomingForm } = require("formidable")
 
+const uploads = resolve(__dirname, './../uploads/')
+
 exports.AddCandidate = (req, res) => {
     let from = new IncomingForm({
-        uploadDir: './uploads/',
+        uploadDir: uploads,
         keepExtensions: true
     })
     from.parse(req, (err, fields, files) => {
@@ -24,7 +26,9 @@ exports.AddCandidate = (req, res) => {
                     message: "添加候选人成功"
                 })
             ).catch(err => {
-                fs.unlink(resolve('./uploads/' + fields.avatar));
+                fs.unlink(resolve(uploads, fields.avatar), err => {
+                    if (err) console.log(err)
+                });
                 res.json({
                     status: err.status || 500,
                     message: err.message || "信息储存失败"
@@ -41,10 +45,8 @@ exports.GetCandidates = (req, res) => {
             cards,
             message: "获取成功"
         })
-    }).catch(err => {
-        res.json({
-            status: 510,
-            message: "获取失败"
-        })
-    })
+    }).catch(err => res.json({
+        status: err.status || 510,
+        message: err.message || "获取失败"
+    }))
 }
